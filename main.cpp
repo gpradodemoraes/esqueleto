@@ -3,22 +3,41 @@
 #include <vector>
 
 
-std::unique_ptr<std::vector<int>> create_vector() {
+std::unique_ptr<std::vector<std::unique_ptr<std::vector<int>>>> create_vector() {
 	auto temp_vec = std::make_unique<std::vector<int>>();
 
 	temp_vec->push_back(1);
 	temp_vec->push_back(10);
 	temp_vec->push_back(100);
 
-	return temp_vec;
+	auto temp_vec_2 = std::make_unique<std::vector<int>>();
+
+	temp_vec_2->push_back(2);
+	temp_vec_2->push_back(20);
+	temp_vec_2->push_back(200);
+
+	auto ret_val = std::make_unique<std::vector<std::unique_ptr<std::vector<int>>>>();
+	ret_val->push_back(std::move(temp_vec_2));
+	ret_val->push_back(std::move(temp_vec));
+
+	return std::move(ret_val);
 }
 
 int main() {
 	fmt::println("Hello, World!");
-
 	auto v = create_vector();
-	for (auto i : *v) {
-		fmt::println("--> {}", i);
+	for (auto const &i : *v) {
+		for (auto j : *i) {
+			fmt::println("--> {}", j);
+		}
+		fmt::println("======");
+	}
+	fmt::println("");
+	while (!v->empty()) {
+		auto i = *v->back();
+		for (auto j : i) fmt::println("--> {}", j);
+		v->pop_back();
+		fmt::println("======");
 	}
 	return 0;
 }
