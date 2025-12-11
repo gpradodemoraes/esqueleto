@@ -36,9 +36,4 @@ add_custom_target(generate-compile-commands
     DEPENDS
         ${CMAKE_BINARY_DIR}/compile_commands.json
     )
-add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/compile_commands.json
-    COMMAND ${CMAKE_COMMAND} -B${CMAKE_BINARY_DIR} -S${CMAKE_SOURCE_DIR}
-    )
-
 ############################
