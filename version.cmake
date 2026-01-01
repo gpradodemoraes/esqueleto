@@ -26,5 +26,5 @@ endif()
 
 configure_file(
   "${SRC_DIR}/git_hash.h.in"
-  "${SRC_DIR}/git_hash.h"
+  "${BIN_DIR}/git_hash.h"
 )
