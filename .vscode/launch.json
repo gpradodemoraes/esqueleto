@@ -6,12 +6,12 @@
             "name": "debug_me",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/build/esqueleto.exe",
+            "program": "${workspaceRoot}/out/build/DBG_esqueleto/esqueleto.exe",
             "args": [
                 "a",
                 "b"
             ],
-            "cwd": "${workspaceRoot}/build",
+            "cwd": "${workspaceRoot}/out/build/DBG_esqueleto",
             "console": "externalTerminal"
         }
     ]
