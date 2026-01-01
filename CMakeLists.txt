@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(fmt CONFIG REQUIRED)
 
-add_executable(esqueleto main.cpp)
 
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -27,12 +26,16 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
       "-P" "${PROJECT_SOURCE_DIR}/version.cmake"
       COMMENT "Generating git version file"
     )
-    add_dependencies(esqueleto gen-version-h)
 endif()
 
+add_executable(esqueleto main.cpp)
 
 target_link_libraries(esqueleto PRIVATE fmt::fmt)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_dependencies(esqueleto gen-version-h)
+endif()
+
 
 ############################
 # Copy to source directory
