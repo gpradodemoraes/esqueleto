@@ -30,7 +30,7 @@ endif()
 
 add_executable(esqueleto main.cpp)
 
-target_link_libraries(esqueleto PRIVATE fmt::fmt)
+target_link_libraries(esqueleto PRIVATE fmt::fmt-header-only)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_dependencies(esqueleto gen-version-h)

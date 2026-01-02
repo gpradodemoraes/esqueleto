@@ -13,6 +13,30 @@
             ],
             "cwd": "${workspaceRoot}/out/build/DBG_esqueleto",
             "console": "externalTerminal"
+        },
+        {
+            "name": "release_me",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/out/build/RLS_esqueleto/esqueleto.exe",
+            "args": [
+                "a",
+                "b"
+            ],
+            "cwd": "${workspaceRoot}/out/build/RLS_esqueleto",
+            "console": "externalTerminal"
+        },
+        {
+            "name": "llvmdebug",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceRoot}/out/build/RLS_esqueleto/esqueleto.exe",
+            "args": [
+                "a",
+                "b"
+            ],
+            "cwd": "${workspaceRoot}/out/build/RLS_esqueleto",
+            "console": "externalTerminal"
         }
     ]
 }
