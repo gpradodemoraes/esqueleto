@@ -3,21 +3,21 @@
 #include <vector>
 
 std::unique_ptr<std::vector<std::vector<int>>> create_vector() {
-	std::vector<int> temp_vec = std::vector<int>();
+	auto temp_vec = std::vector<int>();
 
 	temp_vec.push_back(1);
 	temp_vec.push_back(10);
 	temp_vec.push_back(100);
 
-	std::vector<int> temp_vec_2 = std::vector<int>();
+	auto temp_vec_2 = std::vector<int>();
 
 	temp_vec_2.push_back(2);
 	temp_vec_2.push_back(20);
 	temp_vec_2.push_back(200);
 
 	auto ret_val = std::make_unique<std::vector<std::vector<int>>>();
-	ret_val->push_back(temp_vec_2);
-	ret_val->push_back(temp_vec);
+	ret_val->push_back(std::move(temp_vec_2));
+	ret_val->push_back(std::move(temp_vec));
 
 	return ret_val;
 }
