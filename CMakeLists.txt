@@ -6,9 +6,36 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(fmt CONFIG REQUIRED)
 
+
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(GIT_REV "N/A")
+    set(GIT_DIFF "")
+    set(GIT_TAG "N/A")
+    set(GIT_BRANCH "N/A")
+
+    configure_file(
+      "${PROJECT_SOURCE_DIR}/git_hash.h.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/git_hash.h"
+    )
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_custom_target(gen-version-h
+      COMMAND "${CMAKE_COMMAND}"
+      "-D" "SRC_DIR=${PROJECT_SOURCE_DIR}"
+      "-D" "BIN_DIR=${CMAKE_CURRENT_BINARY_DIR}"
+      "-P" "${PROJECT_SOURCE_DIR}/version.cmake"
+      COMMENT "Generating git version file"
+    )
+endif()
+
 add_executable(esqueleto main.cpp)
 
-target_link_libraries(esqueleto PRIVATE fmt::fmt)
+target_link_libraries(esqueleto PRIVATE fmt::fmt-header-only)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_dependencies(esqueleto gen-version-h)
+endif()
+
 
 ############################
 # Copy to source directory

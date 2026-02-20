@@ -1,6 +1,8 @@
 #include <fmt/core.h>
 #include <memory>
 #include <vector>
+#include "compiled_with.h"
+#include "git_hash.h"
 
 std::unique_ptr<std::vector<std::vector<int>>> create_vector() {
 	auto temp_vec = std::vector<int>();
@@ -24,6 +26,8 @@ std::unique_ptr<std::vector<std::vector<int>>> create_vector() {
 
 int main() {
 	fmt::println("Hello, World!");
+	fmt::println("Compiled With: {}", COMPILED_WITH);
+	fmt::println("Git: {} {}", GIT_REV, GIT_BRANCH);
 	std::unique_ptr<std::vector<std::vector<int>>> v = create_vector();
 	for (auto const &i : *v) {
 		for (auto &j : i) {
