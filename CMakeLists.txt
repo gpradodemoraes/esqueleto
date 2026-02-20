@@ -28,7 +28,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     )
 endif()
 
-add_executable(esqueleto main.cpp)
+add_executable(esqueleto main.cpp thread_test.cpp)
 
 target_link_libraries(esqueleto PRIVATE fmt::fmt-header-only)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})

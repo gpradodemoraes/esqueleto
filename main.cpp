@@ -3,6 +3,7 @@
 #include <vector>
 #include "compiled_with.h"
 #include "git_hash.h"
+#include "thread_test.hpp"
 
 std::unique_ptr<std::vector<std::vector<int>>> create_vector() {
 	auto temp_vec = std::vector<int>();
@@ -42,5 +43,8 @@ int main() {
 		v->pop_back();
 		fmt::println("======");
 	}
+
+	fmt::println("========== início threads ==========");
+	thread_main();
 	return 0;
 }
