@@ -28,9 +28,11 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     )
 endif()
 
-add_executable(esqueleto main.cpp thread_test.cpp)
+add_executable(esqueleto main.cpp BS_threadpool.cpp)
 
 target_link_libraries(esqueleto PRIVATE fmt::fmt-header-only)
+add_library(BS_thread_pool INTERFACE)
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_dependencies(esqueleto gen-version-h)
