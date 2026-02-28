@@ -6,36 +6,36 @@
             "name": "debug_me",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/out/build/DBG_esqueleto/esqueleto.exe",
+            "program": "${workspaceRoot}/out/build/DBG_webserver/webserver.exe",
             "args": [
                 "a",
                 "b"
             ],
-            "cwd": "${workspaceRoot}/out/build/DBG_esqueleto",
+            "cwd": "${workspaceRoot}/out/build/DBG_webserver",
             "console": "externalTerminal"
         },
         {
             "name": "release_me",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/out/build/RLS_esqueleto/esqueleto.exe",
+            "program": "${workspaceRoot}/out/build/RLS_webserver/webserver.exe",
             "args": [
                 "a",
                 "b"
             ],
-            "cwd": "${workspaceRoot}/out/build/RLS_esqueleto",
+            "cwd": "${workspaceRoot}/out/build/RLS_webserver",
             "console": "externalTerminal"
         },
         {
             "name": "llvmdebug",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceRoot}/out/build/RLS_esqueleto/esqueleto.exe",
+            "program": "${workspaceRoot}/out/build/RLS_webserver/webserver.exe",
             "args": [
                 "a",
                 "b"
             ],
-            "cwd": "${workspaceRoot}/out/build/RLS_esqueleto",
+            "cwd": "${workspaceRoot}/out/build/RLS_webserver",
             "console": "externalTerminal"
         }
     ]

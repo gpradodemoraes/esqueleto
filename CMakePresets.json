@@ -2,23 +2,21 @@
     "version": 2,
     "configurePresets": [
         {
-            "name": "DBG_esqueleto",
-            "displayName": "Debug Esqueleto",
+            "name": "DBG_webserver",
+            "displayName": "Debug webserver",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
-            "name": "RLS_esqueleto",
-            "displayName": "Release Esqueleto",
+            "name": "RLS_webserver",
+            "displayName": "Release webserver",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+                "CMAKE_BUILD_TYPE": "Release"
             }
         }
     ]
