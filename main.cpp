@@ -100,14 +100,26 @@ std::string buildErrorResponse(int code, const std::string &reason) {
 bool handleClient(int clientFd) {
 	bool lets_shutdown = false;
 	char buffer[BUFFER_SIZE] = {};
-	ssize_t bytesRead = recv(clientFd, buffer, BUFFER_SIZE - 1, 0);
-	if (bytesRead <= 0) {
-		close(clientFd);
-		return false;
-	}
+	ssize_t bytesRead;
+	size_t total = 0;
+	while (total < BUFFER_SIZE) {
+		bytesRead = recv(clientFd, buffer + total, BUFFER_SIZE - total - 1, 0);
+		std::cout << "+++++++++" << bytesRead << "++++++++++++++" << (char *)buffer + total
+				  << "=========================\n";
+		if (bytesRead < 0) {
+			close(clientFd);
+			return false;
+		}
+		if (bytesRead == 0) break;
+		total += bytesRead;
 
-	std::cout << "\n+++++++++" << bytesRead << "++++++++++++++\n" << buffer << "\n=========================\n";
-	std::string request(buffer, bytesRead);
+		if (total >= 4 && memcmp(buffer + total - 4, "XXXX", 4) == 0) {
+			break;
+		}
+	}
+	std::cout << "FINAL\n" << buffer << "|FIM\n";
+
+	std::string request(buffer, total);
 	std::string response;
 
 	// Check it's a POST request
