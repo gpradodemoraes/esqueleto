@@ -12,6 +12,50 @@
 static const int PORT = 9090;
 static const int BUFFER_SIZE = 4096;
 static const char PASSWORD[] = { "megustamuchoshutdown" };
+static const char html_webpage[] = R"(<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Wake me Up ARCH LINUX</title>
+  <meta name="description" content="wake on lan">
+  <meta name="author" content="Gabriel Moraes">
+  <style>
+h1 { text-decoration: underline; }
+label { font-weight: bold; padding: 10px; }
+body {
+background-color: grey;
+}
+body div {
+    margin: 0;
+	border-radius: 1em;
+	border: 3px dashed black;
+	padding: 20px;
+    background: yellow;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+  </style>
+</head>
+<body>
+<div>
+<h1>Wake Me Up ARCH LINUX</h1>
+<form method="POST" action="https://gabriel.familia.swart.nom.br/cgi-bin/wakemeup.cgi">
+	<label>palavra:</label><input type="text" name="palavra" size="30" value="meunomeehgabrielpradodemoraes"></input><br><br>
+	<input type="submit">
+</form>
+<br>
+<hr>
+<h1>Shut Me Down ARCH LINUX</h1>
+<form method="POST" action="https://shutdown.familia.swart.nom.br/">
+	<label>palavra:</label><input type="text" name="body" size="30" value="megustamuchoshutdown"></input><br><br>
+	<input type="submit">
+</form>
+</div>
+</body>
+</html>)";
 
 std::string extractBody(const std::string &request) {
 	// Find the blank line separating headers from body
@@ -33,7 +77,7 @@ std::string parseBodyValue(const std::string &body, const std::string &key) {
 std::string buildResponse(const std::string &message) {
 	std::ostringstream oss;
 	oss << "HTTP/1.1 200 OK\r\n"
-		<< "Content-Type: text/plain\r\n"
+		<< "Content-Type: text/html; charset=utf-8\r\n"
 		<< "Content-Length: " << message.size() << "\r\n"
 		<< "Connection: close\r\n"
 		<< "\r\n"
@@ -62,11 +106,14 @@ bool handleClient(int clientFd) {
 		return false;
 	}
 
+	std::cout << "\n+++++++++" << bytesRead << "++++++++++++++\n" << buffer << "\n=========================\n";
 	std::string request(buffer, bytesRead);
 	std::string response;
 
 	// Check it's a POST request
-	if (request.substr(0, 4) != "POST") {
+	if (request.substr(0, 3) == "GET") {
+		response = buildResponse(html_webpage);
+	} else if (request.substr(0, 4) != "POST") {
 		response = buildErrorResponse(405, "Method Not Allowed");
 	} else {
 		std::string body = extractBody(request);
@@ -90,7 +137,7 @@ bool handleClient(int clientFd) {
 }
 
 int main() {
-	std::cout << "Compiled With: " << COMPILED_WITH << "\nGit: " << GIT_REV << GIT_BRANCH << "\n";
+	std::cout << "Compiled With: " << COMPILED_WITH << "\nGit: " << GIT_REV << " " << GIT_BRANCH << "\n";
 	int serverFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverFd < 0) {
 		std::cerr << "Failed to create socket\n";
