@@ -32,6 +32,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_dependencies(webserver gen-version-h)
 endif()
 
+target_link_libraries(webserver systemd)
 
 ############################
 # Copy to source directory

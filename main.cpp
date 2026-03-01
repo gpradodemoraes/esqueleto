@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <systemd/sd-daemon.h>
 
 static const int PORT = 9090;
 static const int BUFFER_SIZE = 4096;
@@ -41,6 +42,7 @@ body div {
 </head>
 <body>
 <div>
+<!--
 <h1>Wake Me Up ARCH LINUX</h1>
 <form method="POST" action="https://gabriel.familia.swart.nom.br/cgi-bin/wakemeup.cgi">
 	<label>palavra:</label><input type="text" name="palavra" size="30" value="meunomeehgabrielpradodemoraes"></input><br><br>
@@ -48,6 +50,7 @@ body div {
 </form>
 <br>
 <hr>
+-->
 <h1>Shut Me Down ARCH LINUX</h1>
 <form method="POST" action="https://shutdown.familia.swart.nom.br/">
 	<label>palavra:</label><input type="text" name="body" size="30" value="megustamuchoshutdown"></input><br><br>
@@ -56,6 +59,23 @@ body div {
 </div>
 </body>
 </html>)";
+
+int parse_content_length(const std::string &headers) {
+	std::istringstream stream(headers);
+	std::string line;
+
+	while (std::getline(stream, line)) {
+		// Remove trailing \r if present
+		if (!line.empty() && line.back() == '\r') line.pop_back();
+
+		const std::string prefix = "Content-Length: ";
+		if (line.rfind(prefix, 0) == 0) {
+			return std::stoi(line.substr(prefix.size()));
+		}
+	}
+
+	return -1;
+}
 
 std::string extractBody(const std::string &request) {
 	// Find the blank line separating headers from body
@@ -104,20 +124,27 @@ bool handleClient(int clientFd) {
 	size_t total = 0;
 	while (total < BUFFER_SIZE) {
 		bytesRead = recv(clientFd, buffer + total, BUFFER_SIZE - total - 1, 0);
-		std::cout << "+++++++++" << bytesRead << "++++++++++++++" << (char *)buffer + total
-				  << "=========================\n";
+		// std::cout << "+++++++++" << bytesRead << "++++++++++++++" << (char *)buffer + total
+		//			  << "=========================\n";
 		if (bytesRead < 0) {
 			close(clientFd);
 			return false;
 		}
 		if (bytesRead == 0) break;
 		total += bytesRead;
+		auto sbuffer = std::string(buffer);
+		int content_length = parse_content_length(sbuffer);
+		// bool has_end = (total >= 4 && memcmp(buffer + total - 4, "\r\n\r\n", 4) == 0);
+		size_t pos = sbuffer.find("\r\n\r\n");
+		if (pos == std::string::npos) continue;
 
-		if (total >= 4 && memcmp(buffer + total - 4, "XXXX", 4) == 0) {
-			break;
+		if (content_length == -1) break; // GET
+		if (content_length > 0) {
+			// POST
+			if (content_length = sbuffer.substr(pos + 4).size()) break; // chegamos ao fim do POST
 		}
 	}
-	std::cout << "FINAL\n" << buffer << "|FIM\n";
+	// std::cout << "FINAL\n" << buffer << "|FIM\n";
 
 	std::string request(buffer, total);
 	std::string response;
@@ -176,6 +203,7 @@ int main() {
 	}
 
 	std::cout << "Server listening on port " << PORT << "\n";
+	sd_notify(0, "READY=1");
 
 	while (true) {
 		sockaddr_in clientAddr{};
