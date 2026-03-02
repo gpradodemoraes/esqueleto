@@ -17,7 +17,7 @@ static const char html_webpage[] = R"(<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Wake me Up ARCH LINUX</title>
+  <title>Shut me Down ARCH LINUX</title>
   <meta name="description" content="wake on lan">
   <meta name="author" content="Gabriel Moraes">
   <style>
