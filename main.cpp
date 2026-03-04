@@ -1,46 +1,64 @@
 #include <fmt/core.h>
-#include <memory>
+#include <regex>
 #include <vector>
 #include "compiled_with.h"
 #include "git_hash.h"
 
-std::unique_ptr<std::vector<std::vector<int>>> create_vector() {
-	auto temp_vec = std::vector<int>();
+static const char *testes[] = {
+	"C:\\Users\\gabriel.moraes\\AppData\\Roaming\\repo\\esqueleto\\README",
+	"C:\\Users\\gabriel.moraes\\AppData\\Roaming\\repo\\esqueleto\\CMakeLists.txt",
+	"C:\\Users\\gabriel.moraes\\RUN\\depositos_judiciais\\2024_11_depositos_judiciais\\depositos_judiciais-2024-12-02-"
+	"144541.xlsx",
+	"E:\\Users\\gabriel.moraes\\RUN\\divisao_txt\\2026-02\\CEASA_Lancamentos_Contabeis (26).txt",
+	"/var/log/access.log",
+	"z:/Users/gabriel.moraes/my file.txt",
+	"meu aqruivo.pdf"
+};
 
-	temp_vec.push_back(1);
-	temp_vec.push_back(10);
-	temp_vec.push_back(100);
+static bool extract_filename_from_path_do_the_work(const std::string *path, std::string *ext, std::string *retval) {
+	static const std::regex regex_win(R"(^[A-Za-z]?:?\\(.+\\)*((.+)\.(.+))?)");
 
-	auto temp_vec_2 = std::vector<int>();
+	if (std::smatch file_match; std::regex_search(*path, file_match, regex_win)) {
+		if (file_match.length() > 4) {
+			if (file_match[3].length())
+				*retval = file_match[3];
+			else
+				*retval = file_match.suffix();
+			if (ext != nullptr && file_match[4].length()) *ext = file_match[4];
+			return true;
+		}
+		// if(file_match.suffix()) {
+		//
+		// }
+		if (file_match.length() > 2) {
+			fmt::println("ESTOU NO SIZE 2");
+			exit(1);
+		}
+	}
+	return false;
+}
 
-	temp_vec_2.push_back(2);
-	temp_vec_2.push_back(20);
-	temp_vec_2.push_back(200);
+std::string extract_filename_from_path(const std::string &path, std::string &ext) {
+	if (std::string retval; extract_filename_from_path_do_the_work(&path, &ext, &retval)) return retval;
+	return path;
+}
 
-	auto ret_val = std::make_unique<std::vector<std::vector<int>>>();
-	ret_val->push_back(std::move(temp_vec_2));
-	ret_val->push_back(std::move(temp_vec));
-
-	return ret_val;
+std::string extract_filename_from_path(const std::string &path) {
+	if (std::string retval; extract_filename_from_path_do_the_work(&path, nullptr, &retval)) return retval;
+	return path;
 }
 
 int main() {
-	fmt::println("Hello, World!");
-	fmt::println("Compiled With: {}", COMPILED_WITH);
-	fmt::println("Git: {} {}", GIT_REV, GIT_BRANCH);
-	std::unique_ptr<std::vector<std::vector<int>>> v = create_vector();
-	for (auto const &i : *v) {
-		for (auto &j : i) {
-			fmt::println("--> {}", j);
-		}
-		fmt::println("======");
+	fmt::println("ARRAY SIZE: {}", sizeof(testes) / sizeof(char *));
+
+	for (int i = 0; i < sizeof(testes) / sizeof(char *); i++) {
+		fmt::println("{}|{}|=>|{}|", i, testes[i], extract_filename_from_path(std::string(testes[i])));
 	}
-	fmt::println("");
-	while (!v->empty()) {
-		auto i = v->back();
-		for (auto j : i) fmt::println("--> {}", j);
-		v->pop_back();
-		fmt::println("======");
+	fmt::println("===============");
+	for (int i = 0; i < sizeof(testes) / sizeof(char *); i++) {
+		std::string ext;
+		std::string file = extract_filename_from_path(std::string(testes[i]), ext);
+		fmt::println("{}|{}|=>|{}|{}|", i, testes[i], file, ext);
 	}
 	return 0;
 }
