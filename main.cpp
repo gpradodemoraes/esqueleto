@@ -12,14 +12,26 @@ static const char *testes[] = {
 	"E:\\Users\\gabriel.moraes\\RUN\\divisao_txt\\2026-02\\CEASA_Lancamentos_Contabeis (26).txt",
 	"/var/log/access.log",
 	"z:/Users/gabriel.moraes/my file.txt",
-	"meu aqruivo.pdf"
+	"meu arquivo.pdf",
+	"Gabriel Prado de Moraes"
 };
 
 static bool extract_filename_from_path_do_the_work(const std::string *path, std::string *ext, std::string *retval) {
 	static const std::regex regex_win(R"(^[A-Za-z]?:?\\(.+\\)*((.+)\.(.+))?)");
+	static const std::regex regex_linux(R"(/(.+/)*((.+)\.(.+))?)");
+	static const std::regex regex_no_slash(R"(^([^.]+)\.?(.*))");
 
-	if (std::smatch file_match; std::regex_search(*path, file_match, regex_win)) {
-		if (file_match.length() > 4) {
+	const std::regex *pointer;
+	if (path->find('/') != std::string::npos) {
+		pointer = &regex_linux;
+	} else if (path->find('\\') != std::string::npos) {
+		pointer = &regex_win;
+	} else {
+		pointer = &regex_no_slash;
+	}
+
+	if (std::smatch file_match; std::regex_search(*path, file_match, *pointer)) {
+		if (file_match.size() > 4) {
 			if (file_match[3].length())
 				*retval = file_match[3];
 			else
@@ -30,9 +42,13 @@ static bool extract_filename_from_path_do_the_work(const std::string *path, std:
 		// if(file_match.suffix()) {
 		//
 		// }
-		if (file_match.length() > 2) {
-			fmt::println("ESTOU NO SIZE 2");
-			exit(1);
+		if (file_match.size() > 2) {
+			if (file_match[1].length())
+				*retval = file_match[1];
+			else
+				*retval = file_match.suffix();
+			if (ext != nullptr && file_match[2].length()) *ext = file_match[2];
+			return true;
 		}
 	}
 	return false;
