@@ -34,6 +34,17 @@ endif()
 
 target_link_libraries(webserver systemd)
 
+add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/webpage.h
+	COMMAND xxd -i ${CMAKE_CURRENT_SOURCE_DIR}/webpage.html > ${CMAKE_CURRENT_BINARY_DIR}/webpage.h
+	DEPENDS webpage.html
+)
+add_custom_target(generate_myfile_data
+	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/webpage.h
+)
+add_dependencies(webserver generate_myfile_data)
+target_include_directories(webserver PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
 ############################
 # Copy to source directory
 add_custom_target(
