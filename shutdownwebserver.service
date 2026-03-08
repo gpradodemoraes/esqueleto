@@ -1,0 +1,15 @@
+[Unit]
+Description=Webserver que escuta a porta 9090 e dah shutdown quando recebe um POST correto
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+TimeoutStartSec=15
+Type=notify
+ExecStart=/home/gprad/shutdownwebserver
+Restart=on-failure
+RestartSec=5s
+User=gprad
+
+[Install]
+WantedBy=multi-user.target
