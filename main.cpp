@@ -184,7 +184,7 @@ int main() {
 
 			if (pid == 0) {
 				// Child process
-				execlp("/usr/bin/sudo", "/usr/bin/sudo", "/usr/bin/shutdown", "-h", "+1", nullptr);
+				execlp("/usr/bin/sudo", "/usr/bin/sudo", "/usr/bin/shutdown", "--poweroff", "+1", nullptr);
 				// If execlp fails:
 				perror("execlp");
 				_exit(1);
