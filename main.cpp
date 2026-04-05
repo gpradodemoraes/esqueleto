@@ -1,50 +1,55 @@
-#include <fmt/core.h>
-#include <memory>
+#include <iostream>
+#include <sstream>
+#include <thread>
+#include <mutex>
+#include <chrono>
 #include <vector>
-#include "compiled_with.h"
-#include "git_hash.h"
-#include "thread_test.hpp"
+#include <atomic>
 
-std::unique_ptr<std::vector<std::vector<int>>> create_vector() {
-	auto temp_vec = std::vector<int>();
+std::ostringstream oss;
+std::mutex mtx;
+std::atomic<bool> done(false);
 
-	temp_vec.push_back(1);
-	temp_vec.push_back(10);
-	temp_vec.push_back(100);
+void writer() {
+	std::vector<std::string> words = { "Hello", "from", "the", "writer", "thread!", "Streaming", "words",
+									   "one",	"by",	"one", "into",	 "the",		"string",	 "stream." };
 
-	auto temp_vec_2 = std::vector<int>();
+	for (const auto &word : words) {
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+			oss << word << " ";
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(400));
+	}
 
-	temp_vec_2.push_back(2);
-	temp_vec_2.push_back(20);
-	temp_vec_2.push_back(200);
-
-	auto ret_val = std::make_unique<std::vector<std::vector<int>>>();
-	ret_val->push_back(std::move(temp_vec_2));
-	ret_val->push_back(std::move(temp_vec));
-
-	return ret_val;
+	done = true;
 }
 
 int main() {
-	fmt::println("Hello, World!");
-	fmt::println("Compiled With: {}", COMPILED_WITH);
-	fmt::println("Git: {} {}", GIT_REV, GIT_BRANCH);
-	std::unique_ptr<std::vector<std::vector<int>>> v = create_vector();
-	for (auto const &i : *v) {
-		for (auto &j : i) {
-			fmt::println("--> {}", j);
+	std::thread writerThread(writer);
+
+	std::string lastSeen;
+
+	std::cout << "Reading stream in real time:\n\n";
+
+	while (!done || oss.str().size() > lastSeen.size()) {
+		std::string current;
+		{
+			std::lock_guard<std::mutex> lock(mtx);
+			current = oss.str();
 		}
-		fmt::println("======");
-	}
-	fmt::println("");
-	while (!v->empty()) {
-		auto i = v->back();
-		for (auto j : i) fmt::println("--> {}", j);
-		v->pop_back();
-		fmt::println("======");
+
+		// Only print newly added content
+		if (current.size() > lastSeen.size()) {
+			std::cout << current.substr(lastSeen.size()) << std::flush;
+			lastSeen = current;
+		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
 
-	fmt::println("========== início threads ==========");
-	thread_main();
+	std::cout << "\n\nDone.\n";
+
+	writerThread.join();
 	return 0;
 }
