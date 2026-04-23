@@ -1,50 +1,44 @@
-#include <fmt/core.h>
-#include <memory>
-#include <vector>
-#include "compiled_with.h"
-#include "git_hash.h"
-#include "thread_test.hpp"
+#include <iostream>
+#include <string>
+#include <windows.h>
+#include <conio.h>
 
-std::unique_ptr<std::vector<std::vector<int>>> create_vector() {
-	auto temp_vec = std::vector<int>();
+std::string getHiddenInput() {
+	std::string input;
+	char ch;
 
-	temp_vec.push_back(1);
-	temp_vec.push_back(10);
-	temp_vec.push_back(100);
+	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+	DWORD mode;
+	GetConsoleMode(hStdin, &mode);
+	SetConsoleMode(hStdin, mode & ~ENABLE_ECHO_INPUT);
 
-	auto temp_vec_2 = std::vector<int>();
+	while ((ch = _getch()) != '\r') { // '\r' = Enter key on Windows
+		if (ch == '\b') {			  // Handle backspace
+			if (!input.empty()) {
+				input.pop_back();
+				std::cout << "\b \b";
+			}
+		} else {
+			input += ch;
+			std::cout << '*'; // Print * instead of the character
+		}
+	}
 
-	temp_vec_2.push_back(2);
-	temp_vec_2.push_back(20);
-	temp_vec_2.push_back(200);
-
-	auto ret_val = std::make_unique<std::vector<std::vector<int>>>();
-	ret_val->push_back(std::move(temp_vec_2));
-	ret_val->push_back(std::move(temp_vec));
-
-	return ret_val;
+	SetConsoleMode(hStdin, mode); // Restore original console mode
+	std::cout << std::endl;
+	return input;
 }
 
 int main() {
-	fmt::println("Hello, World!");
-	fmt::println("Compiled With: {}", COMPILED_WITH);
-	fmt::println("Git: {} {}", GIT_REV, GIT_BRANCH);
-	std::unique_ptr<std::vector<std::vector<int>>> v = create_vector();
-	for (auto const &i : *v) {
-		for (auto &j : i) {
-			fmt::println("--> {}", j);
-		}
-		fmt::println("======");
-	}
-	fmt::println("");
-	while (!v->empty()) {
-		auto i = v->back();
-		for (auto j : i) fmt::println("--> {}", j);
-		v->pop_back();
-		fmt::println("======");
-	}
+	std::string username, password;
 
-	fmt::println("========== início threads ==========");
-	thread_main();
+	std::cout << "Username: ";
+	std::cin >> username;
+
+	std::cout << "Password: ";
+	password = getHiddenInput();
+
+	std::cout << "\nLogged in as: " << username << "(" << password << ")" << std::endl;
+
 	return 0;
 }
