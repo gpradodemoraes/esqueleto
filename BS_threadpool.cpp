@@ -18,7 +18,7 @@ int BSThreadpoolmain() {
 
 	int timemilis = 58 * 100;
 	try {
-		for (const auto &entry : fs::directory_iterator("C:\\Users\\gabriel.moraes")) {
+		for (const auto &entry : fs::directory_iterator("C:\\Users\\gabriel.moraes\\RDP")) {
 			if (entry.is_regular_file()) {
 				std::string filename = entry.path().string();
 				std::cout << "Pushing file " << filename << "\n";
@@ -54,6 +54,7 @@ int BSThreadpoolmain() {
 			std::lock_guard<std::mutex> lock(mtx);
 			finished = true;
 		}
+		cv.notify_all();
 	});
 
 	while (true) {
