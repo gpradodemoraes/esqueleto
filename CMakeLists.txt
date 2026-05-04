@@ -5,8 +5,7 @@ project(Esqueleto)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(fmt CONFIG REQUIRED)
-
-
+find_package(simdjson CONFIG REQUIRED)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(GIT_REV "N/A")
@@ -31,6 +30,7 @@ endif()
 add_executable(esqueleto main.cpp thread_test.cpp)
 
 target_link_libraries(esqueleto PRIVATE fmt::fmt-header-only)
+target_link_libraries(esqueleto PRIVATE simdjson::simdjson)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_dependencies(esqueleto gen-version-h)
@@ -50,7 +50,7 @@ add_custom_command(
         ${CMAKE_BINARY_DIR}/compile_commands.json
         ${CMAKE_CURRENT_LIST_DIR}/compile_commands.json
     DEPENDS
-        # Unlike "proper" targets like executables and libraries, 
+        # Unlike "proper" targets like executables and libraries,
         # custom command / target pairs will not set up source
         # file dependencies, so we need to list file explicitly here
         generate-compile-commands

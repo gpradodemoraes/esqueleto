@@ -1,5 +1,9 @@
 {
   "dependencies": [
-    "fmt"
+    "fmt",
+	{
+		"name": "simdjson",
+		"version>=": "4.6.1"
+	}
   ]
 }
