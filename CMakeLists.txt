@@ -5,8 +5,7 @@ project(Esqueleto)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(fmt CONFIG REQUIRED)
-
-
+find_package(tvision CONFIG REQUIRED)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(GIT_REV "N/A")
@@ -28,9 +27,11 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     )
 endif()
 
-add_executable(esqueleto main.cpp thread_test.cpp)
+add_executable(esqueleto main.cpp palette.cpp)
 
 target_link_libraries(esqueleto PRIVATE fmt::fmt-header-only)
+target_link_libraries(esqueleto PRIVATE tvision::tvision)
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_dependencies(esqueleto gen-version-h)
