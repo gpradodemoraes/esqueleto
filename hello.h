@@ -14,6 +14,7 @@
 #include <tvision/menus.h>
 
 const int GreetThemCmd = 100;
+const int cmMyNewWin = 101;
 
 class THelloApp : public TApplication {
    public:
@@ -21,8 +22,9 @@ class THelloApp : public TApplication {
 	virtual void handleEvent(TEvent &event);
 	static TMenuBar *initMenuBar(TRect);
 	static TStatusLine *initStatusLine(TRect);
-
+	// void changeBounds(const TRect &bounds);
    private:
+	void myNewWindow();
 	void greetingBox();
 };
 

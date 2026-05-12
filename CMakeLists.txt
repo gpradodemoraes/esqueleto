@@ -27,7 +27,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     )
 endif()
 
-add_executable(esqueleto main.cpp hello.cpp)
+add_executable(esqueleto main.cpp hello.cpp TDemoWindow.cpp)
 
 target_link_libraries(esqueleto PRIVATE fmt::fmt-header-only)
 target_link_libraries(esqueleto PRIVATE tvision::tvision)
