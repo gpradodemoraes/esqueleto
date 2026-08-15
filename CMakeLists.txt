@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(Esqueleto)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 find_package(fmt CONFIG REQUIRED)
-
-
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(GIT_REV "N/A")
@@ -26,14 +26,19 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
       "-P" "${PROJECT_SOURCE_DIR}/version.cmake"
       COMMENT "Generating git version file"
     )
+
 endif()
 
-add_executable(esqueleto main.cpp thread_test.cpp)
+add_executable(esqueleto main.cpp thread_test.cpp build_timestamp.cpp)
 
 target_link_libraries(esqueleto PRIVATE fmt::fmt-header-only)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_dependencies(esqueleto gen-version-h)
+	add_custom_target(file_toucher
+		COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${CMAKE_CURRENT_SOURCE_DIR}/build_timestamp.cpp ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+
+	add_dependencies(esqueleto file_toucher)
 endif()
 
 

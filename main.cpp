@@ -5,6 +5,8 @@
 #include "git_hash.h"
 #include "thread_test.hpp"
 
+extern const char *build_date;
+
 std::unique_ptr<std::vector<std::vector<int>>> create_vector() {
 	auto temp_vec = std::vector<int>();
 
@@ -29,6 +31,7 @@ int main() {
 	fmt::println("Hello, World!");
 	fmt::println("Compiled With: {}", COMPILED_WITH);
 	fmt::println("Git: {} {}", GIT_REV, GIT_BRANCH);
+	fmt::println("Build date: {}", build_date);
 	std::unique_ptr<std::vector<std::vector<int>>> v = create_vector();
 	for (auto const &i : *v) {
 		for (auto &j : i) {
